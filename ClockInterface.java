@@ -18,16 +18,7 @@ public interface ClockInterface extends Remote{
     */
     public long getGroundTruth() throws RemoteException;
 
-    // public Instant getInstantObj() throws RemoteException;
     public void setClockObj(Duration diff) throws RemoteException;
 
     public void resetClockObj() throws RemoteException;
 }
-
-
-
-// clock server - true time
-// clock message - bas object
-// local clock - serves as the inaccurate clock and will act as the parent class of your more accurate clock
-// ImprovedLocalClock should implement your clock synchronization algorithm.
-// LocalClockEvaluator, should evaluate the accuracy of the basic local clock provided. This should simply measure the error between the time reported by the local clock and the ground truth value provided by the server

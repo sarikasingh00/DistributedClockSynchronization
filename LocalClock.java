@@ -58,7 +58,7 @@ public class LocalClock extends TimerTask {
             ClockInterface cs= (ClockInterface) Naming.lookup("ClockServer");
             long serverTime = cs.getTime();
             // long error = this.getTime()-serverTime;
-            System.out.println(this.getTime() + " " + serverTime);
+            // System.out.println(this.getTime() + " " + serverTime);
             // this.arr[ctr++] = error;
             // evaluate_obj.cristian_error[ctr++] = error;
         }

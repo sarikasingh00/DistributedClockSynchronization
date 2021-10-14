@@ -3,6 +3,7 @@ import java.util.TimerTask;
 import java.rmi.*;
 import java.io.*; 
 import java.time.*;
+import java.lang.Math;
 
 public class ImprovedLocalClock extends TimerTask {
     Timer timer, improve_timer;
@@ -37,11 +38,6 @@ public class ImprovedLocalClock extends TimerTask {
         else if(algo_ctr ==1){
             this.berkeley();
         }
-        else{
-            // this.arr_ctr = 0;
-            // this.ctr = 0;
-            this.ntp();
-        }
     }
 
 
@@ -70,11 +66,12 @@ public class ImprovedLocalClock extends TimerTask {
                 // long exec_time = exec_end - exec_start;
                 // sum += exec_time;
                 long error = old_time-serverTime;
-                evaluate_obj.cristian_error[arr_ctr++] = error;
+                evaluate_obj.cristian_error[arr_ctr++] = Math.abs(error);
 
-                System.out.println("Fixing local clock " + old_time + " new time " + (old_time+diff) + " server time " + serverTime + " Error " + error);
+                System.out.println("Cristian : Local clock time- " + old_time  + ", Server time- " + serverTime + ", New time- " + (old_time+diff) + ", Error- " + error);
                 ctr++;
-                if(ctr>=200){
+                if(ctr==200){;
+                    System.out.println("Reset clock");
                     cs.resetClockObj();
                 }
             }
@@ -92,12 +89,17 @@ public class ImprovedLocalClock extends TimerTask {
             // for(int i=0; i<3000;i++){
             //     System.out.print(this.evaluate_obj.cristian_error[i] + ",");
             // }
-            this.evaluate_obj.print_error();
+            try{
+                this.evaluate_obj.printCristianError();
+            }
+            catch(Exception e){
+                System.out.println("" + e);
+            }
         }
     }
 
     public void berkeley(){
-        System.out.println("Berkeley");
+        // System.out.println("Berkeley");
          long old_time = this.clock.getTime();
         // long exec_start = Instant.now().toEpochMilli();
         if(ctr<200){
@@ -115,7 +117,8 @@ public class ImprovedLocalClock extends TimerTask {
                 // System.out.println("New cs time " + cs.getTime());
 
                 long error = old_time-serverTime;
-                evaluate_obj.berkeley_error[arr_ctr++] = error;
+                evaluate_obj.berkeley_error[arr_ctr++] = Math.abs(error);
+                System.out.println("Berkeley : Local clock time- " + old_time +  ", Server time- " + serverTime + ", New time: " + (average) + ", Error- " + error);
                 ctr++;
                 
             }
@@ -124,18 +127,10 @@ public class ImprovedLocalClock extends TimerTask {
             }
         }
         else{
-            this.algo_ctr++;
-            // this.timer.cancel();
-            // this.improve_timer.cancel();
-            for(int i=0; i<3000;i++){
-                System.out.print(this.evaluate_obj.berkeley_error[i] + ",");
-            }
-            // this.evaluate_obj.print_error();
+            this.evaluate_obj.printBerkelyError();
+            this.timer.cancel();
+            this.improve_timer.cancel();
         }
-    }
-
-    public void ntp(){
-        System.out.println("NTP");
     }
 
     public static void main(String args[]){

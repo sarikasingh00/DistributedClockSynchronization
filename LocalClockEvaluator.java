@@ -1,20 +1,33 @@
+import java.io.*;
+import java.util.*;
+
 public class LocalClockEvaluator{
     long cristian_error[], berkeley_error[], ntp_error[];
     public LocalClockEvaluator(){
-        cristian_error = new long[3000];
-        berkeley_error = new long[3000];
-        ntp_error = new long[3000];
+        cristian_error = new long[200];
+        berkeley_error = new long[200];
     }
 
-    public void print_error(){
-        for(int i = 0; i<3000;i++){
-            System.out.print(this.cristian_error[i] + ",");
+    public void printCristianError() throws IOException{
+        BufferedWriter outputWriter = new BufferedWriter(new FileWriter("cristian.txt"));
+        for (int i = 0; i < cristian_error.length; i++) {
+            outputWriter.write(cristian_error[i]+",");
         }
-        // for(int i = 0; i<3000;i++){
-        //     System.out.println(this.berkeley_error[i] + ",");
-        // }
-        // for(int i = 0; i<3000;i++){
-        //     System.out.println(this.ntp_error[i] + ",");
-        // }
+        outputWriter.flush();  
+        outputWriter.close();
+    }
+    
+    public void printBerkelyError(){
+        try{
+            BufferedWriter outputWriter = new BufferedWriter(new FileWriter("berkeley.txt"));
+            for (int i = 0; i < berkeley_error.length; i++) {
+                outputWriter.write(berkeley_error[i]+",");
+            }
+            outputWriter.flush();  
+            outputWriter.close();
+        }
+        catch(Exception e){
+            System.out.println(e);
+        }
     }
 }

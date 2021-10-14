@@ -43,10 +43,6 @@ public class ClockServer extends UnicastRemoteObject implements ClockInterface{
         return Instant.now().toEpochMilli();
     }
 
-    // public Instant getInstantObj() throws RemoteException{
-    //     return this.instant;
-    // }
-
     public void setClockObj(Duration diff) throws RemoteException{
         // this.instant = newInstant;
         clientClock = clientClock.offset(clientClock, diff);
