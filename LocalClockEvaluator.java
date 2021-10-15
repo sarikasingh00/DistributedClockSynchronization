@@ -3,7 +3,7 @@ import java.util.*;
 
 public class LocalClockEvaluator{
     // arrays to keep track of time error, as per the algorithms used
-    long cristian_error[], berkeley_error[], global_error_cristian[], global_error_berkeley[];
+    long cristian_error[], berkeley_error[], global_error_cristian[], global_error_berkeley[], global_server_cristian[], global_server_berkeley[];
     
     //Constructor to instantiate LocalClockEvaluator object
     public LocalClockEvaluator(){
@@ -11,6 +11,8 @@ public class LocalClockEvaluator{
         berkeley_error = new long[200]; //tracks client time - server time for berekeley algorithm
         global_error_cristian = new long[200]; //tracks client time - ground truth time for cristian algorithm
         global_error_berkeley = new long[200]; //tracks client time - ground truth time for berkeley algorithm
+        global_server_cristian = new long[200]; //tracks server time - ground truth time for cristian algorithm
+        global_server_berkeley = new long[200]; //tracks server time - ground truth time for berkeley algorithm
     }
 
     public void printCristianError(){
@@ -22,10 +24,17 @@ public class LocalClockEvaluator{
             }
             outputWriter.flush();  
             outputWriter.close();
-            // global time error to be written to output file
+            // client - global time error to be written to output file
             outputWriter = new BufferedWriter(new FileWriter("cristian_global.txt"));
             for (int i = 0; i < cristian_error.length; i++) {
                 outputWriter.write(global_error_cristian[i]+",");
+            }
+            outputWriter.flush();  
+            outputWriter.close();
+            // server - global time error to be written to output file
+            outputWriter = new BufferedWriter(new FileWriter("cristian_global_server.txt"));
+            for (int i = 0; i < cristian_error.length; i++) {
+                outputWriter.write(global_server_cristian[i]+",");
             }
             outputWriter.flush();  
             outputWriter.close();
@@ -44,10 +53,18 @@ public class LocalClockEvaluator{
             }
             outputWriter.flush();  
             outputWriter.close();
-            // global time error to be written to output file
+            //client - global time error to be written to output file
             outputWriter = new BufferedWriter(new FileWriter("berkeley_global.txt")); 
             for (int i = 0; i < cristian_error.length; i++) {
                 outputWriter.write(global_error_berkeley[i]+",");
+            }
+            outputWriter.flush();  
+            outputWriter.close();
+            
+            //server - global time error to be written to output file
+            outputWriter = new BufferedWriter(new FileWriter("berkeley_global_server.txt")); 
+            for (int i = 0; i < cristian_error.length; i++) {
+                outputWriter.write(global_server_berkeley[i]+",");
             }
             outputWriter.flush();  
             outputWriter.close();

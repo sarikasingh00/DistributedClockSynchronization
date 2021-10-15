@@ -18,7 +18,7 @@ public class ImprovedLocalClock extends TimerTask {
         clock = new LocalClock(); // initialise LocalClock
         ctr = 0; // counter for number of synchronization iterations
         arr_ctr = 0; // array counter for index of error array
-        algo_ctr = 0; // counter to check which algorithm should be executed
+        // algo_ctr = 0; // counter to check which algorithm should be executed
 
         evaluate_obj = new LocalClockEvaluator(); // evaluates errors periodically and stores them
 
@@ -26,14 +26,10 @@ public class ImprovedLocalClock extends TimerTask {
         improve_timer.schedule(this, 500, 500); // Schedule synchronization algorithm at every 500ms interval.
     }
 
-    //scheduled function, runs every 500ms and executes algorithm based on algo_ctr
+    //scheduled function, runs every 500ms and executes algorithm based on which line is uncommented
     public void run() { 
-        if(algo_ctr ==0){
-            this.cristian();
-        }
-        else if(algo_ctr ==1){
-            this.berkeley();
-        }
+        this.cristian();
+        // this.berkeley();
     }
 
     
@@ -59,7 +55,8 @@ public class ImprovedLocalClock extends TimerTask {
                 
                 long error = old_time-serverTime; // error from server time at start of synchronization
                 evaluate_obj.cristian_error[arr_ctr] = Math.abs(error);
-                evaluate_obj.global_error_cristian[arr_ctr++] = Math.abs(old_time - cs.getGroundTruth()); // error from ground truth
+                evaluate_obj.global_error_cristian[arr_ctr] = Math.abs(old_time - cs.getGroundTruth()); // error from ground truth
+                evaluate_obj.global_server_cristian[arr_ctr++] = Math.abs(serverTime - cs.getGroundTruth()); // error of server from ground truth
                 
 
                 System.out.println("Cristian : Local clock time- " + old_time  + ", Server time- " + serverTime + ", New time- " + (old_time+diff) + ", Error- " + error);
@@ -67,6 +64,7 @@ public class ImprovedLocalClock extends TimerTask {
                 if(ctr==200){ // resets Clock servers clock to ground truth UTC time before next algorithm is run
                     System.out.println("Reset clock");
                     cs.resetClockObj();
+                    clock.setTime(Instant.now().toEpochMilli());
                 }
             }
 
@@ -75,10 +73,13 @@ public class ImprovedLocalClock extends TimerTask {
             }
         }
         else{
-            this.algo_ctr++; //move to next algorithm
+            // this.algo_ctr++; //move to next algorithm
             this.arr_ctr = 0; // reset array index counter
             this.ctr = 0; // reset iteration counter
             this.evaluate_obj.printCristianError(); // write errors to output file
+            
+            this.timer.cancel(); // To stop the schedule updtae of local Clock
+            this.improve_timer.cancel(); // To stop the schedule synchronization algorithm
         }
     }
 
@@ -97,9 +98,16 @@ public class ImprovedLocalClock extends TimerTask {
 
                 long error = old_time-serverTime; // error from server time at start of synchronization
                 evaluate_obj.berkeley_error[arr_ctr] = Math.abs(error);
-                evaluate_obj.global_error_berkeley[arr_ctr++] = Math.abs(old_time - cs.getGroundTruth()); // error from ground truth
+                evaluate_obj.global_error_berkeley[arr_ctr] = Math.abs(old_time - cs.getGroundTruth()); // error from ground truth
+                evaluate_obj.global_server_berkeley[arr_ctr++] = Math.abs(serverTime - cs.getGroundTruth()); // error of server from ground truth
+
                 System.out.println("Berkeley : Local clock time- " + old_time +  ", Server time- " + serverTime + ", New time: " + (average) + ", Error- " + error);
                 ctr++;
+                if(ctr==200){ // resets Clock servers clock to ground truth UTC time before next algorithm is run
+                    System.out.println("Reset clock");
+                    cs.resetClockObj();
+                    clock.setTime(Instant.now().toEpochMilli());
+                }
                 
             }
             catch(Exception e){
@@ -107,6 +115,9 @@ public class ImprovedLocalClock extends TimerTask {
             }
         }
         else{
+            // this.algo_ctr++; //move to next algorithm
+            this.arr_ctr = 0; // reset array index counter
+            this.ctr = 0; // reset iteration counter
             this.evaluate_obj.printBerkelyError(); //To print the Berkeley errors
             this.timer.cancel(); // To stop the schedule updtae of local Clock
             this.improve_timer.cancel(); // To stop the schedule synchronization algorithm

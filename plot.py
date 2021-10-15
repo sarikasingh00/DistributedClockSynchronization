@@ -67,10 +67,33 @@ plt.ylabel('Error in ms')
 plt.legend(['Cristian', 'Berkeley'])
 plt.show()
 
+# get client-global time errors for both algorithms
+cristian_file = open('cristian_global_server.txt')
+berkeley_file = open('berkeley_global_server.txt')
+
+cristian_global_server_errors = []
+berkeley_global_server_errors = []
+
+for line in cristian_file:
+    cristian_global_server_errors = list(map(int,line.split(",")[:-1]))
+
+for line in berkeley_file:
+    berkeley_global_server_errors = list(map(int,line.split(",")[:-1]))
+# plot first 20 errors to understand trend
+plt.plot(cristian_global_server_errors[:20])
+plt.plot(berkeley_global_server_errors[:20])
+plt.title('Difference Between Global Time and Server Clock time')
+plt.xlabel('Iteration')
+plt.ylabel('Error in ms')
+plt.legend(['Cristian', 'Berkeley'])
+plt.show()
+
 cristian_errors = np.array(cristian_errors)
 berkeley_errors = np.array(berkeley_errors)
 berkeley_global_errors = np.array(berkeley_global_errors)
 cristian_global_errors = np.array(cristian_global_errors)
+berkeley_global_server_errors = np.array(berkeley_global_server_errors)
+cristian_global_server_errors = np.array(cristian_global_server_errors)
 
 # calculate mean and standard deviation for the given data
 print("Cristian Server-Client errors:")
@@ -82,3 +105,8 @@ print("\nCristian Client-Global Time errors:")
 print("Standard deviation: ", cristian_global_errors.std(),"Mean: ", cristian_global_errors.mean())
 print("Berkeley Client-Global Time errors:")
 print("Standard deviation: ", berkeley_global_errors.std(),"Mean: ", berkeley_global_errors.mean())
+
+print("\nCristian Server-Global Time errors:")
+print("Standard deviation: ", cristian_global_server_errors.std(),"Mean: ", cristian_global_server_errors.mean())
+print("Berkeley Client-Global Time errors:")
+print("Standard deviation: ", berkeley_global_server_errors.std(),"Mean: ", berkeley_global_server_errors.mean())
